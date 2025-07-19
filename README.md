@@ -1,6 +1,7 @@
 # Project Description
-This project is fleshed out to be a modernized NES-like audio chip. Many of the design choices are made with the NES APU in mind while adding a bit (lot) more control. I am creating this prohject to simply add a cool space invaders shoot sound to a space invaders game i ported to the DE1SOC running on a M68k softcore. While I could save audio files to ROM and read from them, that lacked the bit of spice I have been adding for other features such as color. The original NES APU docs are [here](https://www.nesdev.org/wiki/APU). Also credit to the Terasic starter programs that can be found on their website for their audio initialization files to set up the WM8731 audio CODEC chip. I also included a simple file to send the audio bitstream to the audio codec.     
+This project is fleshed out to be a modernized NES-like audio chip. Many of the design choices are made with the NES APU in mind while adding a bit (lot) more control. I am creating this project to simply add a cool space invaders shoot sound to a space invaders game I ported to the DE1SOC running on a M68k softcore. 
 
+The original NES APU docs are [here](https://www.nesdev.org/wiki/APU). Credit to the Terasic starter programs that can be found on their website for their `I2C_AV_Config.v` audio initialization file to set up the WM8731 audio CODEC chip .
 # Pulse Channel – Verilog Audio Synth Core
 
 This module implements a **pulse (square wave) generator** with full **ADSR envelope control**, **frequency sweep**, **stereo panning**, and customizable **duty cycles**, designed for retro 8-bit sound synthesis. It's intended as part of a larger audio chip project.
@@ -17,6 +18,7 @@ The module operates on multiple clock domains (50 MHz system, 8 kHz envelope
 - Frequency sweep with programmable shift, period, direction, and enable
 - Looping capability with configurable loop counter
 - Dynamic retriggering on register change or dummy bit write
+- Testing script to run the associated test bench and generate a .wav preveiw of the sound output with chosen settings
 
 ---
 
