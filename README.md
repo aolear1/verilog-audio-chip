@@ -1,3 +1,6 @@
+# Project Description
+This project is fleshed out to be a modernized NES-like audio chip. Many of the design choices are made with the NES APU in mind while adding a bit (lot) more control. I am creating this prohject to simply add a cool space invaders shoot sound to a space invaders game i ported to the DE1SOC running on a M68k softcore. While I could save audio files to ROM and read from them, that lacked the bit of spice I have been adding for other features such as color. The original NES APU docs are [here](https://www.nesdev.org/wiki/APU). Also credit to the Terasic starter programs that can be found on their website for their audio initialization files to set up the WM8731 audio CODEC chip. I also included a simple file to send the audio bitstream to the audio codec.     
+
 # Pulse Channel – Verilog Audio Synth Core
 
 This module implements a **pulse (square wave) generator** with full **ADSR envelope control**, **frequency sweep**, **stereo panning**, and customizable **duty cycles**, designed for retro 8-bit sound synthesis. It's intended as part of a larger audio chip project.
@@ -24,16 +27,16 @@ The module operates on multiple clock domains (50 MHz system, 8 kHz envelope
 | `reg_0` | `[7]`     | Envelope Mode: `1 = ADSR`, `0 = Constant` |
 |        | `[6]`     | Dummy bit — software-triggered note replay |
 |        | `[5:0]`   | Constant volume or Sustain level (if ADSR) |
-| `reg_1` | `[7:0]`   | Attack time (in 8 kHz ticks) |
-| `reg_2` | `[7:0]`   | Decay time (in 8 kHz ticks) |
+| `reg_1` | `[7:0]`   | Attack time |
+| `reg_2` | `[7:0]`   | Decay time |
 | `reg_3` | `[1:0]`   | Sustain shift (multiplies sustain time by `2^x`) |
-|        | `[7:2]`   | Sustain time (in 8 kHz ticks) |
-| `reg_4` | `[7:0]`   | Release time (in 8 kHz ticks) |
+|        | `[7:2]`   | Sustain time |
+| `reg_4` | `[7:0]`   | Release time |
 | `reg_5` | `[7:5]`   | Duty cycle index (0–7) |
-|        | `[4:0]`   | Stereo pan (0 = hard left, 31 = hard right) |
+|        | `[4:0]`   | Stereo pan (0 = hard left, 31 = hard right, 16 = center) |
 | `reg_6` | `[7:0]`   | Frequency timer (low 8 bits) |
 | `reg_7` | `[7:4]`   | Loop counter (repeats envelope sequence) |
-|        | `[3]`     | Reset sweep on loop (1 = yes) |
+|        | `[3]`     | Reset sweep freq on loop (1 = yes) |
 |        | `[2:0]`   | Frequency timer (high 3 bits) |
 | `reg_8` | `[7]`     | Sweep enable |
 |        | `[6]`     | Sweep negate (1 = decrease frequency) |
@@ -46,19 +49,18 @@ The module operates on multiple clock domains (50 MHz system, 8 kHz envelope
 
 A companion Excel spreadsheet is provided to help with design and tuning. It contains:
 
-- ADSR envelope calculators (in clock ticks and milliseconds)
+- ADSR envelope calculators
 - Frequency timer lookup tables (musical note mapping)
-- Sweep timing estimators based on shift, period, and direction
-- Sustain time calculator based on shift amount
-- Graphs visualizing envelope and sweep transitions
+- Sweep timing and frequency calculations based on shift, period, and direction
 
-**File:** `pulse_channel_timings.xlsx`
+**Spreadsheet:** [Here](https://docs.google.com/spreadsheets/d/1Eh8U3UQXN52IiYh81gvbQNVTpkSmRxA_tjlzTd-N62A/edit?usp=sharing)
 
 ---
 
 ## Usage Notes
 
-- Any change to a register retriggers the envelope and sweep logic.
+- Envelope is retriggered upon any change to an envelope related register.
+- Sweep is retriggered on any register change, as well as on ADSR loops if the flag is enabled (will reset frequency to original frequency set by timer value)
 - To replay a sound, toggle the dummy bit (`reg_0[6]`) or make a small change to any envelope parameter.
 - The duty cycle sets the harmonic profile (timbre) using a 16-step pattern.
 - If the frequency becomes invalid (<10 or >1023), the channel mutes automatically.
@@ -70,7 +72,7 @@ A companion Excel spreadsheet is provided to help with design and tuning. It con
 
 - Stereo 16-bit signed PCM output
 - Output sample rate: 48 kHz
-- Panning is linear: 0 (left) to 31 (right)
+- Panning is linear: 0 (left) to 31 (right), 16 is dead center
 
 ---
 
@@ -79,11 +81,11 @@ A companion Excel spreadsheet is provided to help with design and tuning. It con
 This example sets up a basic tone with fast attack, moderate decay, short sustain, and soft release:
 
 ```verilog
-reg_0 = 8'b10000000; // ADSR enabled, sustain level 0
-reg_1 = 8'd4;        // Attack time = 0.5 ms
-reg_2 = 8'd8;        // Decay time = 1 ms
-reg_3 = 8'b00000100; // Sustain time = 1 ms (with no shift)
-reg_4 = 8'd16;       // Release time = 2 ms
+reg_0 = 8'b10100000; // ADSR enabled, sustain level 32
+reg_1 = 8'd10;        // Attack time = 88 ms
+reg_2 = 8'd10;        // Decay time = 44 ms
+reg_3 = 8'b01010000; // Sustain time = 84 ms (with no shift)
+reg_4 = 8'd16;       // Release time = 68 ms
 reg_5 = 8'b01100000; // 50% duty cycle, center panned
 reg_6 = 8'hFF;       // Timer low
 reg_7 = 8'b00000001; // Timer high + no loop
@@ -94,6 +96,6 @@ reg_8 = 8'b00000000; // No sweep
 
 ## Planned Features
 
-- Integration with triangle, noise, and wave generator channels
+- Integration with triangle and noise channels for the full NES-like chip
 - Support for modulation and LFOs
-- Event-driven sequencer system for note control
+- Altera MM integration and addressable chip
