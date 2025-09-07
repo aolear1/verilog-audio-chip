@@ -1,0 +1,30 @@
+Info: Starting: Create block symbol file (.bsf)
+Info: qsys-generate /home/aiden/Documents/programmin/projects/De1SocSpeaker/audio_test/pll.qsys --block-symbol-file --output-directory=/home/aiden/Documents/programmin/projects/De1SocSpeaker/audio_test/pll --family="Cyclone V" --part=5CSEMA5F31C6
+Progress: Loading audio_test/pll.qsys
+Progress: Reading input file
+Progress: Adding audio_pll_0 [altera_up_avalon_audio_pll 18.0]
+Progress: Parameterizing module audio_pll_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: qsys-generate succeeded.
+Info: Finished: Create block symbol file (.bsf)
+Info: 
+Info: Starting: Create HDL design files for synthesis
+Info: qsys-generate /home/aiden/Documents/programmin/projects/De1SocSpeaker/audio_test/pll.qsys --synthesis=VERILOG --output-directory=/home/aiden/Documents/programmin/projects/De1SocSpeaker/audio_test/pll/synthesis --family="Cyclone V" --part=5CSEMA5F31C6
+Progress: Loading audio_test/pll.qsys
+Progress: Reading input file
+Progress: Adding audio_pll_0 [altera_up_avalon_audio_pll 18.0]
+Progress: Parameterizing module audio_pll_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: pll: Generating pll "pll" for QUARTUS_SYNTH
+Info: audio_pll_0: "pll" instantiated altera_up_avalon_audio_pll "audio_pll_0"
+Info: audio_pll: "audio_pll_0" instantiated altera_pll "audio_pll"
+Info: reset_from_locked: "audio_pll_0" instantiated altera_up_avalon_reset_from_locked_signal "reset_from_locked"
+Info: pll: Done "pll" with 4 modules, 5 files
+Info: qsys-generate succeeded.
+Info: Finished: Create HDL design files for synthesis

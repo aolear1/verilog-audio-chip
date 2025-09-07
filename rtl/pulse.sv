@@ -52,7 +52,7 @@ wire        swp_rst_on_loop     = reg_7[3];
 wire        swp_neg     = reg_8[6];       // Sweep negate
 wire [2:0]  swp_shift   = reg_8[5:3];     // Sweep shift amount
 wire [3:0]  swp_period  = {1'b0,reg_8[2:0]};     // Sweep period
-logic       swp_trigger;
+logic       swp_trigger, tmp_swp_trigger;
 
 //Square wave signals
 wire [10:0]    sqr_frq_start   = {reg_7[2:0], reg_6[7:0]};
@@ -69,6 +69,7 @@ logic signed [6:0] vol_out;
 logic [3:0] loops;
 
 assign vol_out = env_mode ? env_vol : sus_vol;
+
 
 always_ff @(posedge clk_8khz) begin
     if (env_oR != {reg_0,reg_1,reg_2,reg_3,reg_4}) begin
@@ -133,7 +134,7 @@ always_ff @(posedge clk_8khz) begin
                     if (env_vol == 6'd0) begin
                         env_state <= (loops > 0) ? Sattack : Swait;
                         loops <= loops - (loops > 0);
-                        swp_trigger <= (loops > 0) & swp_rst_on_loop;
+                        tmp_swp_trigger <= (loops > 0) & swp_rst_on_loop;
                     end else begin
                         env_vol <= env_vol - 1;
                     end
@@ -159,6 +160,10 @@ always_ff @(posedge clk_8khz) begin
     if (swp_oR != {reg_0,reg_1,reg_2,reg_3,reg_4,reg_5,reg_6,reg_7,reg_8}) begin
         swp_trigger <= 1'b1;
         swp_oR <= {reg_0,reg_1,reg_2,reg_3,reg_4,reg_5,reg_6,reg_7,reg_8};
+    end
+
+    if (tmp_swp_trigger) begin
+        swp_trigger <= 1'b1;
     end
 
     if(~reset_n | swp_trigger) begin

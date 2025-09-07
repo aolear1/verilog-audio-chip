@@ -205,11 +205,18 @@ always_comb begin
     endcase
 end
 
+reg signed [15:0] unstable_noise, stable_noise;
+
+always_ff @(posedge clk_48khz) begin
+    unstable_noise <= noise;
+    stable_noise <= unstable_noise;
+end
+
 
 wire signed [16:0] pan_left  = (32 - pan) << 10;
 wire signed [16:0] pan_right = pan << 10;
 wire signed [22:0] scaled_amp;
-assign scaled_amp = (noise * vol_out) >>> 6;
+assign scaled_amp = (stable_noise * vol_out) >>> 6;
 
 /* Update sound */
 wire signed [31:0] left_channel, right_channel;

@@ -178,7 +178,13 @@ always_ff @(posedge clk_50mhz) begin
     end
 end
 
-wire signed [9:0] shifted_wave = $signed(wave_out - 10'd511);
+reg [9:0] unstable_wave_out, stable_wave_out;
+always_ff @(posedge clk_48khz) begin
+    unstable_wave_out <= wave_out;
+    stable_wave_out <= unstable_wave_out;
+end
+
+wire signed [9:0] shifted_wave = $signed(stable_wave_out - 10'd511);
 wire shift = (wave_type && shifted_wave < 10'd255 && shifted_wave > -10'sd256);
 
 wire signed [16:0] pan_left  = (32 - pan) << 10;
