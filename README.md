@@ -8,7 +8,7 @@ Credit to the Terasic starter programs (available on their website) for their `I
 ---
 
 ## Table of Contents
-
+- [De1-SOC Console](#console)
 - [Pulse Channel](#pulse-channel)
   - [Features](#features)
   - [Register Map](#register-map)
@@ -24,6 +24,46 @@ Credit to the Terasic starter programs (available on their website) for their `I
 - [Usage Notes](#usage-notes)
 - [Output Specification](#output-specification)
 - [Planned Features](#planned-features)
+
+---
+
+## De1-SOC Console
+
+This console connects a NES-style audio chip to the DE1-SoC and provides an interface for creating, storing, and playing back register profiles that drive the chip’s sound channels.
+
+### Mode Selection
+- **Button 3 (leftmost):** Switch between **Mode 0 (Edit Profiles)** and **Mode 1 (Playback)**.  
+- **LED 0 (leftmost):** Indicates the current mode (off = Mode 0, on = Mode 1).
+
+---
+
+### Mode 0: Register/Profile Editing
+- **Buttons 0 / 1:** Increment / decrement the currently selected register index.  
+  - Middle two HEX displays: current register index (decimal).  
+  - Leftmost HEX display: current register value for the selected profile.  
+  - Rightmost two HEX displays: byte value in hex written to that register.  
+- **Switches 0–7:** Set the 8-bit value to write into the selected register.  
+- **Switches 8–9:** Select profile 0–2.  
+  - If set to `3`, enter **Load/Store mode** to save or load profiles from on-chip memory (editable via the In-System Memory Content Editor).  
+  - **Button 3** triggers the load/store operation.  
+- **LEDs:** Display the last value written to the selected register.  
+
+#### Profiles
+Each profile consists of **35 registers**:  
+- Registers `0–8` → Pulse channel 1  
+- Registers `9–17` → Pulse channel 2  
+- Registers `18–23` → Triangle channel 1  
+- Registers `24–29` → Triangle channel 2  
+- Registers `30–34` → Noise channel  
+
+---
+
+### Mode 1: Playback
+- **Switches 0–4:** Toggle individual channel outputs (up = mute).  
+- **Buttons 0–2:** Write profiles 0–2 to the chip for playback.  
+- **Note:** Muted channels remain muted until the next profile is written *and* the channel is toggled back on.  
+
+
 
 ---
 
@@ -165,4 +205,4 @@ A spreadsheet for tuning ADSR and LFSR values is included for envelope shaping a
 
 ## Planned Features
 
-- MIDI compatibility?
+- .NSF backwards compatibility?
