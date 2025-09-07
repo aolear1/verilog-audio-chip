@@ -11,7 +11,7 @@ Credit to the Terasic starter programs (available on their website) for their `I
 - [De1-SOC Console](#console)
 - [Pulse Channel](#pulse-channel)
   - [Features](#features)
-  - [Register Map](#register-map)
+  - [Pulse Register Map](#pulse-register-map)
   - [Example Configuration](#example-configuration)
 - [Noise Channel](#noise-channel)
   - [Overview](#overview)
@@ -80,23 +80,28 @@ This Verilog module implements a **pulse (square wave) generator** with full **A
 - Looping and dynamic retriggering via register change or dummy bit
 - WAV generation testbench for previewing sound output
 
-### Register Map
+### Pulse Register Map
 
-| Reg    | Bits       | Description |
-|--------|------------|-------------|
-| `reg_0` | `[7]`     | Envelope Mode: `1 = ADSR`, `0 = Constant` |
-|         | `[6]`     | Dummy bit — software-triggered note replay |
-|         | `[5:0]`   | Constant volume or Sustain level |
-| `reg_1` | `[7:0]`   | Attack time |
-| `reg_2` | `[7:0]`   | Decay time |
-| `reg_3` | `[1:0]`   | Sustain shift (2^x multiplier) |
-|         | `[7:2]`   | Sustain time |
-| `reg_4` | `[7:0]`   | Release time |
-| `reg_5` | `[7:5]`   | Duty cycle index (0–7) |
-|         | `[4:0]`   | Stereo pan (0=left, 31=right, 16=center) |
-| `reg_6` | `[7:0]`   | Frequency timer (low byte) |
-| `reg_7` | `[7:4]`   | Loop enable, Sweep enable, Sweep direction, Sweep shift |
-|         | `[3:0]`   | Frequency timer (high nibble) |
+| Register | Bits     | Description |
+|----------|----------|-------------|
+| `reg_0`  | `[7]`    | Envelope Mode: `1 = ADSR`, `0 = Constant` |
+|          | `[6]`    | Dummy bit — software-triggered note replay |
+|          | `[5:0]`  | Constant volume or Sustain level |
+| `reg_1`  | `[7:0]`  | Attack time (8-bit) |
+| `reg_2`  | `[7:0]`  | Decay time (8-bit) |
+| `reg_3`  | `[7:2]`  | Sustain time (6-bit) |
+|          | `[1:0]`  | Sustain shift (2^x multiplier) |
+| `reg_4`  | `[7:0]`  | Release time (8-bit) |
+| `reg_5`  | `[7:5]`  | Duty cycle index (0–7) |
+|          | `[4:0]`  | Stereo pan (0 = left, 31 = right, 16 = center) |
+| `reg_6`  | `[7:0]`  | Frequency timer, low byte |
+| `reg_7`  | `[7:4]`  | Loop counter (4 bits) |
+|          | `[3]`    | Reset sweep on loop |
+|          | `[2:0]`  | Frequency timer, high nibble |
+| `reg_8`  | `[7]`    | Sweep enable |
+|          | `[6]`    | Sweep negate |
+|          | `[5:3]`  | Sweep shift (3 bits) |
+|          | `[2:0]`  | Sweep period (3 bits) |
 
 ---
 
